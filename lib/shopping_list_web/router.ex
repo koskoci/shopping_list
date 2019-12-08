@@ -18,6 +18,7 @@ defmodule ShoppingListWeb.Router do
 
     get "/", PageController, :index
     resources "/ingredients", IngredientController
+    resources "/items", ItemController
   end
 
   # Other scopes may use custom stacks.

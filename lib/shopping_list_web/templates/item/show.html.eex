@@ -1,0 +1,23 @@
+<h1>Show Item</h1>
+
+<ul>
+
+  <li>
+    <strong>Quantity:</strong>
+    <%= @item.quantity %>
+  </li>
+
+  <li>
+    <strong>Optional:</strong>
+    <%= @item.optional %>
+  </li>
+
+  <li>
+    <strong>Dish:</strong>
+    <%= @item.dish %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.item_path(@conn, :edit, @item) %></span>
+<span><%= link "Back", to: Routes.item_path(@conn, :index) %></span>
