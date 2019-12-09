@@ -98,20 +98,6 @@ defmodule ShoppingList.RecipesTest do
       assert {:error, %Ecto.Changeset{}} = Recipes.create_item(@invalid_attrs)
     end
 
-    test "update_item/2 with valid data updates the item" do
-      item = item_fixture()
-      assert {:ok, %Item{} = item} = Recipes.update_item(item, @update_attrs)
-      assert item.dish == "some updated dish"
-      assert item.optional == false
-      assert item.quantity == 43
-    end
-
-    test "update_item/2 with invalid data returns error changeset" do
-      item = item_fixture()
-      assert {:error, %Ecto.Changeset{}} = Recipes.update_item(item, @invalid_attrs)
-      assert item == Recipes.get_item!(item.id)
-    end
-
     test "delete_item/1 deletes the item" do
       item = item_fixture()
       assert {:ok, %Item{}} = Recipes.delete_item(item)

@@ -19,35 +19,10 @@ defmodule ShoppingListWeb.ItemController do
       {:ok, item} ->
         conn
         |> put_flash(:info, "Item created successfully.")
-        |> redirect(to: Routes.item_path(conn, :show, item))
+        |> redirect(to: Routes.item_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
-    end
-  end
-
-  def show(conn, %{"id" => id}) do
-    item = Recipes.get_item!(id)
-    render(conn, "show.html", item: item)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    item = Recipes.get_item!(id)
-    changeset = Recipes.change_item(item)
-    render(conn, "edit.html", item: item, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "item" => item_params}) do
-    item = Recipes.get_item!(id)
-
-    case Recipes.update_item(item, item_params) do
-      {:ok, item} ->
-        conn
-        |> put_flash(:info, "Item updated successfully.")
-        |> redirect(to: Routes.item_path(conn, :show, item))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", item: item, changeset: changeset)
     end
   end
 

@@ -32,9 +32,7 @@ defmodule ShoppingList.Recipes do
       %Ingredient{}
 
   """
-  def get_ingredient!(id) do
-    Repo.one!(from i in Ingredient, where: ^id == i.id)
-  end
+  def get_ingredient!(id), do: Repo.get!(Ingredient, id)
 
   @doc """
   Creates a ingredient.
@@ -149,25 +147,7 @@ defmodule ShoppingList.Recipes do
   end
 
   @doc """
-  Updates a item.
-
-  ## Examples
-
-      iex> update_item(item, %{field: new_value})
-      {:ok, %Item{}}
-
-      iex> update_item(item, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_item(%Item{} = item, attrs) do
-    item
-    |> Item.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Item.
+  Deletes an Item.
 
   ## Examples
 

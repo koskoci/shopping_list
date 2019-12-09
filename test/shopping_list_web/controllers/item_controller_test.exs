@@ -27,14 +27,12 @@ defmodule ShoppingListWeb.ItemControllerTest do
   end
 
   describe "create item" do
-    test "redirects to show when data is valid", %{conn: conn} do
+    test "redirects to index when data is valid", %{conn: conn} do
       conn = post(conn, Routes.item_path(conn, :create), item: @create_attrs)
+      assert redirected_to(conn) == Routes.item_path(conn, :index)
 
-      assert %{id: id} = redirected_params(conn)
-      assert redirected_to(conn) == Routes.item_path(conn, :show, id)
-
-      conn = get(conn, Routes.item_path(conn, :show, id))
-      assert html_response(conn, 200) =~ "Show Item"
+      conn = get(conn, Routes.item_path(conn, :index))
+      assert html_response(conn, 200) =~ "Listing Items"
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -43,41 +41,18 @@ defmodule ShoppingListWeb.ItemControllerTest do
     end
   end
 
-  describe "edit item" do
-    setup [:create_item]
-
-    test "renders form for editing chosen item", %{conn: conn, item: item} do
-      conn = get(conn, Routes.item_path(conn, :edit, item))
-      assert html_response(conn, 200) =~ "Edit Item"
-    end
-  end
-
-  describe "update item" do
-    setup [:create_item]
-
-    test "redirects when data is valid", %{conn: conn, item: item} do
-      conn = put(conn, Routes.item_path(conn, :update, item), item: @update_attrs)
-      assert redirected_to(conn) == Routes.item_path(conn, :show, item)
-
-      conn = get(conn, Routes.item_path(conn, :show, item))
-      assert html_response(conn, 200) =~ "some updated dish"
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, item: item} do
-      conn = put(conn, Routes.item_path(conn, :update, item), item: @invalid_attrs)
-      assert html_response(conn, 200) =~ "Edit Item"
-    end
-  end
-
   describe "delete item" do
     setup [:create_item]
 
     test "deletes chosen item", %{conn: conn, item: item} do
+      conn = get(conn, Routes.item_path(conn, :index))
+      assert html_response(conn, 200) =~ @create_attrs.dish
+
       conn = delete(conn, Routes.item_path(conn, :delete, item))
       assert redirected_to(conn) == Routes.item_path(conn, :index)
-      assert_error_sent 404, fn ->
-        get(conn, Routes.item_path(conn, :show, item))
-      end
+
+      conn = get(conn, Routes.item_path(conn, :index))
+      refute html_response(conn, 200) =~ @create_attrs.dish
     end
   end
 
