@@ -15,8 +15,8 @@
       </section>
     </header>
     <main role="main" class="container">
-      <!-- <div class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></div> -->
-      <!-- <div class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></div> -->
+      <div class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></div>
+      <div class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></div>
       <%= render @view_module, @view_template, assigns %>
     </main>
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>

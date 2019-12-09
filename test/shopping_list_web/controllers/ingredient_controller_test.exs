@@ -42,32 +42,6 @@ defmodule ShoppingListWeb.IngredientControllerTest do
     end
   end
 
-  describe "edit ingredient" do
-    setup [:create_ingredient]
-
-    test "renders form for editing chosen ingredient", %{conn: conn, ingredient: ingredient} do
-      conn = get(conn, Routes.ingredient_path(conn, :edit, ingredient))
-      assert html_response(conn, 200) =~ "Edit Ingredient"
-    end
-  end
-
-  describe "update ingredient" do
-    setup [:create_ingredient]
-
-    test "redirects when data is valid", %{conn: conn, ingredient: ingredient} do
-      conn = put(conn, Routes.ingredient_path(conn, :update, ingredient), ingredient: @update_attrs)
-      assert redirected_to(conn) == Routes.ingredient_path(conn, :index)
-
-      conn = get(conn, Routes.ingredient_path(conn, :index))
-      assert html_response(conn, 200)
-    end
-
-    test "renders errors when data is invalid", %{conn: conn, ingredient: ingredient} do
-      conn = put(conn, Routes.ingredient_path(conn, :update, ingredient), ingredient: @invalid_attrs)
-      assert html_response(conn, 200) =~ "Edit Ingredient"
-    end
-  end
-
   describe "delete ingredient" do
     setup [:create_ingredient]
 
