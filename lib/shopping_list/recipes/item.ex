@@ -6,7 +6,7 @@ defmodule ShoppingList.Recipes.Item do
     field :dish, :string
     field :optional, :boolean, default: false
     field :quantity, :integer
-    field :ingredient_id, :id
+    belongs_to :ingredient, ShoppingList.Recipes.Ingredient
 
     timestamps()
   end
@@ -14,7 +14,8 @@ defmodule ShoppingList.Recipes.Item do
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:quantity, :optional, :dish])
-    |> validate_required([:quantity, :optional, :dish])
+    |> cast(attrs, [:quantity, :optional, :dish, :ingredient_id])
+    |> validate_required([:quantity, :optional, :dish, :ingredient_id])
+    |> foreign_key_constraint(:ingredient, name: :items_ingredient_id_fkey)
   end
 end

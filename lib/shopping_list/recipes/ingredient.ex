@@ -5,6 +5,7 @@ defmodule ShoppingList.Recipes.Ingredient do
   schema "ingredients" do
     field :metric, :string
     field :name, :string
+    has_many :items, ShoppingList.Recipes.Item
 
     timestamps()
   end

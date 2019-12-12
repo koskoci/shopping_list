@@ -2,12 +2,11 @@ defmodule ShoppingList.RecipesTest do
   use ShoppingList.DataCase
 
   alias ShoppingList.Recipes
+  alias ShoppingList.Recipes.Ingredient
 
   describe "ingredients" do
-    alias ShoppingList.Recipes.Ingredient
 
     @valid_attrs %{name: "flour", metric: "grams"}
-    @update_attrs %{name: "flour", metric: "g"}
     @invalid_attrs %{name: "flour", metric: 5}
 
     def ingredient_fixture(attrs \\ %{}) do
@@ -15,6 +14,14 @@ defmodule ShoppingList.RecipesTest do
         attrs
         |> Enum.into(@valid_attrs)
         |> Recipes.create_ingredient()
+
+      ingredient
+    end
+
+    def item_with_ingredient(ingredient_id) do
+      {:ok, ingredient} =
+        %{dish: "some dish", optional: true, quantity: 42, ingredient_id: ingredient_id}
+        |> Recipes.create_item()
 
       ingredient
     end
@@ -37,22 +44,16 @@ defmodule ShoppingList.RecipesTest do
       assert {:error, %Ecto.Changeset{}} = Recipes.create_ingredient(@invalid_attrs)
     end
 
-    test "update_ingredient/2 with valid data updates the ingredient" do
-      ingredient = ingredient_fixture()
-      assert {:ok, %Ingredient{} = ingredient} = Recipes.update_ingredient(ingredient, @update_attrs)
-      assert ingredient.metric == "g"
-    end
-
-    test "update_ingredient/2 with invalid data returns error changeset" do
-      ingredient = ingredient_fixture()
-      assert {:error, %Ecto.Changeset{}} = Recipes.update_ingredient(ingredient, @invalid_attrs)
-      assert ingredient == Recipes.get_ingredient!(ingredient.id)
-    end
-
-    test "delete_ingredient/1 deletes the ingredient" do
+    test "delete_ingredient/1 deletes the ingredient if no items belong to it" do
       ingredient = ingredient_fixture()
       assert {:ok, %Ingredient{}} = Recipes.delete_ingredient(ingredient)
       assert_raise Ecto.NoResultsError, fn -> Recipes.get_ingredient!(ingredient.id) end
+    end
+
+    test "delete_ingredient/1 with item returns error changeset" do
+      ingredient = ingredient_fixture()
+      item_with_ingredient(ingredient.id)
+      assert {:error, %Ecto.Changeset{}} = Recipes.delete_ingredient(ingredient)
     end
 
     test "change_ingredient/1 returns a ingredient changeset" do
@@ -64,9 +65,13 @@ defmodule ShoppingList.RecipesTest do
   describe "items" do
     alias ShoppingList.Recipes.Item
 
-    @valid_attrs %{dish: "some dish", optional: true, quantity: 42}
-    @update_attrs %{dish: "some updated dish", optional: false, quantity: 43}
-    @invalid_attrs %{dish: nil, optional: nil, quantity: nil}
+    @valid_attrs %{dish: "some dish", optional: true, quantity: 42, ingredient_id: nil}
+    @invalid_attrs %{dish: nil, optional: nil, quantity: nil, ingredient: nil}
+
+    def create_flour() do
+      {:ok, %Ingredient{id: id}} = Recipes.create_ingredient(%{name: "flour", metric: "grams"})
+      id
+    end
 
     def item_fixture(attrs \\ %{}) do
       {:ok, item} =
@@ -77,35 +82,51 @@ defmodule ShoppingList.RecipesTest do
       item
     end
 
-    test "list_items/0 returns all items" do
-      item = item_fixture()
-      assert Recipes.list_items() == [item]
+    test "list_items/0 returns all items with ingredients" do
+      ingredient = ingredient_fixture()
+      item = item_with_ingredient(ingredient.id)
+      [recalled_item] = Recipes.list_items()
+
+      assert %{item | ingredient: nil} == %{recalled_item | ingredient: nil}
+      assert %Ingredient{} = recalled_item.ingredient
     end
 
-    test "get_item!/1 returns the item with given id" do
-      item = item_fixture()
+    test "get_item!/1 returns the item with given id without its ingredient" do
+      item = item_fixture(ingredient_id: create_flour())
       assert Recipes.get_item!(item.id) == item
     end
 
     test "create_item/1 with valid data creates a item" do
-      assert {:ok, %Item{} = item} = Recipes.create_item(@valid_attrs)
+      id = create_flour()
+      assert {:ok, %Item{} = item} = Recipes.create_item(%{@valid_attrs | ingredient_id: id})
       assert item.dish == "some dish"
       assert item.optional == true
       assert item.quantity == 42
+      assert item.ingredient_id == id
     end
 
     test "create_item/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Recipes.create_item(@invalid_attrs)
     end
 
+    test "create_item/1 without ingredient_id returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Recipes.create_item(@valid_attrs)
+    end
+
+    test "create_item/1 with invalid ingredient_id returns error changeset" do
+      id = create_flour()
+
+      assert {:error, %Ecto.Changeset{}} = Recipes.create_item(%{@valid_attrs | ingredient_id: id + 1})
+    end
+
     test "delete_item/1 deletes the item" do
-      item = item_fixture()
+      item = item_fixture(ingredient_id: create_flour())
       assert {:ok, %Item{}} = Recipes.delete_item(item)
       assert_raise Ecto.NoResultsError, fn -> Recipes.get_item!(item.id) end
     end
 
-    test "change_item/1 returns a item changeset" do
-      item = item_fixture()
+    test "change_item/1 returns an item changeset" do
+      item = item_fixture(ingredient_id: create_flour())
       assert %Ecto.Changeset{} = Recipes.change_item(item)
     end
   end

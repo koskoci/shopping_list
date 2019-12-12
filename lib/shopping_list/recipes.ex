@@ -81,7 +81,10 @@ defmodule ShoppingList.Recipes do
 
   """
   def delete_ingredient(%Ingredient{} = ingredient) do
-    Repo.delete(ingredient)
+    ingredient
+    |> Ecto.Changeset.change
+    |> Ecto.Changeset.no_assoc_constraint(:items)
+    |> Repo.delete
   end
 
   @doc """
@@ -109,24 +112,24 @@ defmodule ShoppingList.Recipes do
 
   """
   def list_items do
-    Repo.all(Item)
+    query = from i in Item, preload: [:ingredient]
+    Repo.all(query)
   end
 
   @doc """
   Gets a single item.
 
-  Raises `Ecto.NoResultsError` if the Item does not exist.
+  Raises if the Item does not exist.
 
   ## Examples
 
       iex> get_item!(123)
       %Item{}
 
-      iex> get_item!(456)
-      ** (Ecto.NoResultsError)
-
   """
-  def get_item!(id), do: Repo.get!(Item, id)
+  def get_item!(id) do
+    Repo.one!(from i in Item, where: ^id == i.id)
+  end
 
   @doc """
   Creates a item.
