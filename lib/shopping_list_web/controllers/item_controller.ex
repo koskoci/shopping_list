@@ -11,7 +11,9 @@ defmodule ShoppingListWeb.ItemController do
 
   def new(conn, _params) do
     changeset = Recipes.change_item(%Item{})
-    render(conn, "new.html", changeset: changeset)
+    ingredients = Recipes.list_ingredients()
+
+    render(conn, "new.html", changeset: changeset, ingredients: ingredients)
   end
 
   def create(conn, %{"item" => item_params}) do
@@ -22,7 +24,9 @@ defmodule ShoppingListWeb.ItemController do
         |> redirect(to: Routes.item_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        ingredients = Recipes.list_ingredients()
+
+        render(conn, "new.html", changeset: changeset, ingredients: ingredients)
     end
   end
 

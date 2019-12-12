@@ -2,14 +2,19 @@ defmodule ShoppingListWeb.ItemControllerTest do
   use ShoppingListWeb.ConnCase
 
   alias ShoppingList.Recipes
+  alias ShoppingList.Recipes.Ingredient
 
-  @create_attrs %{dish: "some dish", optional: true, quantity: 42}
-  @update_attrs %{dish: "some updated dish", optional: false, quantity: 43}
-  @invalid_attrs %{dish: nil, optional: nil, quantity: nil}
+  @create_attrs %{dish: "some dish", optional: true, quantity: 42, ingredient_id: nil}
+  @invalid_attrs %{dish: nil, optional: nil, quantity: nil, ingredient_id: nil}
 
   def fixture(:item) do
-    {:ok, item} = Recipes.create_item(@create_attrs)
+    {:ok, item} = Recipes.create_item(%{ @create_attrs | ingredient_id: create_flour() })
     item
+  end
+
+  def create_flour() do
+    {:ok, %Ingredient{id: id}} = Recipes.create_ingredient(%{name: "flour", metric: "grams"})
+    id
   end
 
   describe "index" do
@@ -20,7 +25,14 @@ defmodule ShoppingListWeb.ItemControllerTest do
   end
 
   describe "new item" do
+    test "assigns ingredients", %{conn: conn} do
+      create_flour()
+      conn = get(conn, Routes.item_path(conn, :new))
+      assert [ %Ingredient{} ] =  conn.assigns.ingredients
+    end
+
     test "renders form", %{conn: conn} do
+      create_flour()
       conn = get(conn, Routes.item_path(conn, :new))
       assert html_response(conn, 200) =~ "New Item"
     end
@@ -28,7 +40,7 @@ defmodule ShoppingListWeb.ItemControllerTest do
 
   describe "create item" do
     test "redirects to index when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.item_path(conn, :create), item: @create_attrs)
+      conn = post(conn, Routes.item_path(conn, :create), item: %{ @create_attrs | ingredient_id: create_flour() })
       assert redirected_to(conn) == Routes.item_path(conn, :index)
 
       conn = get(conn, Routes.item_path(conn, :index))
@@ -37,7 +49,7 @@ defmodule ShoppingListWeb.ItemControllerTest do
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.item_path(conn, :create), item: @invalid_attrs)
-      assert html_response(conn, 200) =~ "New Item"
+      assert html_response(conn, 200) =~ "Oops, something went wrong! Please check the errors below"
     end
   end
 

@@ -22,41 +22,24 @@ defmodule ShoppingListWeb.IngredientController do
         |> redirect(to: Routes.ingredient_path(conn, :index))
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
-  end
-
-  def show(conn, %{"id" => id}) do
-    ingredient = Recipes.get_ingredient!(id)
-    render(conn, "show.html", ingredient: ingredient)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    ingredient = Recipes.get_ingredient!(id)
-    changeset = Recipes.change_ingredient(ingredient)
-    render(conn, "edit.html", ingredient: ingredient, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "ingredient" => ingredient_params}) do
-    ingredient = Recipes.get_ingredient!(id)
-
-    case Recipes.update_ingredient(ingredient, ingredient_params) do
-      {:ok, ingredient} ->
         conn
-        |> put_flash(:info, "Ingredient updated successfully.")
-        |> redirect(to: Routes.ingredient_path(conn, :index))
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", ingredient: ingredient, changeset: changeset)
+        |> put_flash(:error, "Cannot create ingredient, already created")
+        |> render("new.html", changeset: changeset)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     ingredient = Recipes.get_ingredient!(id)
-    {:ok, _ingredient} = Recipes.delete_ingredient(ingredient)
+    case Recipes.delete_ingredient(ingredient) do
+      {:ok, ingredient} ->
+        conn
+        |> put_flash(:info, "Ingredient deleted successfully.")
+        |> redirect(to: Routes.ingredient_path(conn, :index))
 
-    conn
-    |> put_flash(:info, "Ingredient deleted successfully.")
-    |> redirect(to: Routes.ingredient_path(conn, :index))
+      {:error, %Ecto.Changeset{} = %{ errors: errors }} ->
+        conn
+        |> put_flash(:error, "Cannot delete ingredient, still in use")
+        |> redirect(to: Routes.ingredient_path(conn, :index))
+    end
   end
 end
