@@ -1,22 +1,26 @@
 <h1>Listing Items</h1>
 
-<table>
+<table class="table">
   <thead>
     <tr>
-      <th>Quantity</th>
-      <th>Optional</th>
       <th>Dish</th>
-
+      <th>Quantity</th>
+      <th>Metric</th>
+      <th></th>
+      <th>Ingredient</th>
+      <th>Optional</th>
       <th></th>
     </tr>
   </thead>
   <tbody>
-<%= for item <- @items do %>
+<%= for item <- sort(@items) do %>
     <tr>
-      <td><%= item.quantity %></td>
-      <td><%= item.optional %></td>
       <td><%= item.dish %></td>
-
+      <td><%= item.quantity %></td>
+      <td><%= item.ingredient.metric %></td>
+      <td> of </td>
+      <td><%= item.ingredient.name %></td>
+      <td><%= item.optional %></td>
       <td>
         <span><%= link "Delete", to: Routes.item_path(@conn, :delete, item), method: :delete, data: [confirm: "Are you sure?"] %></span>
       </td>

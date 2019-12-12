@@ -1,17 +1,11 @@
 <%= form_for @changeset, @action, fn f -> %>
-  <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
-      <%= inspect @changeset.errors %>
-    </div>
-  <% end %>
+  <%= label f, :name %>
+  <%= text_input f, :name %>
+  <%= error_tag f, :name %>
 
-  <label>
-    Name: <%= text_input f, :name %>
-  </label>
-  <label>
-    Metric: <%= text_input f, :metric %>
-  </label>
+  <%= label f, :metric %>
+  <%= text_input f, :metric %>
+  <%= error_tag f, :metric %>
 
   <div>
     <%= submit "Save" %>

@@ -1,2 +1,12 @@
 @import "custom";
 @import '../node_modules/bootstrap/scss/bootstrap';
+
+.alert:empty {
+  display: none;
+}
+
+/* Phoenix inline forms in links and buttons */
+form.link,
+form.button {
+  display: inline;
+}
