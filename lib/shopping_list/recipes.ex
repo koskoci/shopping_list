@@ -7,6 +7,30 @@ defmodule ShoppingList.Recipes do
   alias ShoppingList.Repo
 
   alias ShoppingList.Recipes.Ingredient
+  alias ShoppingList.Recipes.Item
+
+  def list_dishes do
+    from(i in Item, distinct: true, select: i.dish)
+    |> Repo.all
+  end
+
+  def create_list(dishes) do
+    from(
+      i in Item,
+      where: i.dish in ^dishes,
+      group_by: i.ingredient_id,
+      select: { i.ingredient_id, sum(i.quantity) }
+    )
+    |> Repo.all
+    |> Enum.map(&expand(&1))
+  end
+
+  defp expand({ingredient_id, quantity}) do
+    %{
+      quantity: quantity,
+      ingredient: Repo.get!(Ingredient, ingredient_id),
+    }
+  end
 
   @doc """
   Returns the list of ingredients.
