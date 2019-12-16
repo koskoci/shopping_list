@@ -11,8 +11,7 @@ defmodule ShoppingList.Recipes.Ingredient do
   end
 
   @allowed_fields [:name, :metric]
-  
-  @doc false
+
   def changeset(ingredient, attrs) do
     ingredient
     |> cast(attrs, @allowed_fields)

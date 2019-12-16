@@ -12,8 +12,7 @@ defmodule ShoppingList.Recipes.Item do
   end
 
   @allowed_fields [:quantity, :optional, :dish, :ingredient_id]
-  
-  @doc false
+
   def changeset(item, attrs) do
     item
     |> cast(attrs, @allowed_fields)
