@@ -1,35 +1,14 @@
 defmodule ShoppingList.Recipes do
 
   import Ecto.Query, warn: false
-  alias ShoppingList.Repo
 
+  alias ShoppingList.Repo
   alias ShoppingList.Recipes.Ingredient
   alias ShoppingList.Recipes.Item
-  alias ShoppingList.Recipes.List
 
   def list_dishes do
     from(i in Item, distinct: true, select: i.dish)
     |> Repo.all
-  end
-
-  def create_list(dishes) do
-    query = from item in Item,
-      join: ingr in Ingredient,
-      on: item.ingredient_id == ingr.id,
-      where: item.dish in ^dishes,
-      group_by: [ingr.name, ingr.metric],
-      order_by: [ingr.name],
-      select: %Item{
-        quantity: sum(item.quantity),
-        ingredient: %Ingredient{
-          name: ingr.name,
-          metric: ingr.metric,
-        },
-      }
-
-    %List{
-      items: Repo.all(query)
-    }
   end
 
   def list_ingredients do

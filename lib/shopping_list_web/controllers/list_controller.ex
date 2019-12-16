@@ -2,6 +2,7 @@ defmodule ShoppingListWeb.ListController do
   use ShoppingListWeb, :controller
 
   alias ShoppingList.Recipes
+  alias ShoppingList.Tallies
 
   def new(conn, _params) do
     dishes = Recipes.list_dishes()
@@ -10,8 +11,8 @@ defmodule ShoppingListWeb.ListController do
   end
 
   def create(conn, %{"list" => %{"dishes" => dishes}}) do
-    list = Recipes.create_list(dishes)
-    
+    list = Tallies.create_list(dishes)
+
     render(conn, "show.html", list: list)
   end
 end
