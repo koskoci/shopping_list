@@ -10,11 +10,13 @@ defmodule ShoppingList.Recipes.Ingredient do
     timestamps()
   end
 
+  @allowed_fields [:name, :metric]
+  
   @doc false
   def changeset(ingredient, attrs) do
     ingredient
-    |> cast(attrs, [:name, :metric])
-    |> validate_required([:name, :metric])
+    |> cast(attrs, @allowed_fields)
+    |> validate_required(@allowed_fields)
     |> unique_constraint(:name)
   end
 end

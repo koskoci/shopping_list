@@ -11,11 +11,13 @@ defmodule ShoppingList.Recipes.Item do
     timestamps()
   end
 
+  @allowed_fields [:quantity, :optional, :dish, :ingredient_id]
+  
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, [:quantity, :optional, :dish, :ingredient_id])
-    |> validate_required([:quantity, :optional, :dish, :ingredient_id])
+    |> cast(attrs, @allowed_fields)
+    |> validate_required(@allowed_fields)
     |> foreign_key_constraint(:ingredient, name: :items_ingredient_id_fkey)
   end
 end

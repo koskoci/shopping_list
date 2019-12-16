@@ -8,6 +8,7 @@ defmodule ShoppingList.Recipes do
 
   alias ShoppingList.Recipes.Ingredient
   alias ShoppingList.Recipes.Item
+  alias ShoppingList.Recipes.List
 
   def list_dishes do
     from(i in Item, distinct: true, select: i.dish)
@@ -15,20 +16,22 @@ defmodule ShoppingList.Recipes do
   end
 
   def create_list(dishes) do
-    from(
-      i in Item,
-      where: i.dish in ^dishes,
-      group_by: i.ingredient_id,
-      select: { i.ingredient_id, sum(i.quantity) }
-    )
-    |> Repo.all
-    |> Enum.map(&expand(&1))
-  end
+    query = from item in Item,
+      join: ingr in Ingredient,
+      on: item.ingredient_id == ingr.id,
+      where: item.dish in ^dishes,
+      group_by: [ingr.name, ingr.metric],
+      order_by: [ingr.name],
+      select: %Item{
+        quantity: sum(item.quantity),
+        ingredient: %Ingredient{
+          name: ingr.name,
+          metric: ingr.metric,
+        },
+      }
 
-  defp expand({ingredient_id, quantity}) do
-    %{
-      quantity: quantity,
-      ingredient: Repo.get!(Ingredient, ingredient_id),
+    %List{
+      items: Repo.all(query)
     }
   end
 

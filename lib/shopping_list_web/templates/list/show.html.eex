@@ -3,20 +3,17 @@
 <table class="table">
   <thead>
     <tr>
+      <th>Ingredient</th>
       <th>Quantity</th>
       <th>Metric</th>
-      <th></th>
-      <th>Ingredient</th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
-    <%= for list_item <- @list do %>
+    <%= for list_item <- @list.items do %>
     <tr>
+      <td><%= list_item.ingredient.name %></td>
       <td><%= list_item.quantity %></td>
       <td><%= list_item.ingredient.metric %></td>
-      <td> of </td>
-      <td><%= list_item.ingredient.name %></td>
     </tr>
     <% end %>
   </tbody>
