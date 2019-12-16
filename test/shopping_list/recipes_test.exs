@@ -4,27 +4,52 @@ defmodule ShoppingList.RecipesTest do
   alias ShoppingList.Recipes
   alias ShoppingList.Recipes.Ingredient
 
-  describe "ingredients" do
+  def ingredient_fixture(attrs \\ %{}) do
+    {:ok, ingredient} =
+      attrs
+      |> Enum.into(%{name: "flour", metric: "grams"})
+      |> Recipes.create_ingredient()
 
+    ingredient
+  end
+
+  def item_with_ingredient(ingredient_id) do
+    {:ok, item} =
+      %{dish: "some dish", optional: true, quantity: 42, ingredient_id: ingredient_id}
+      |> Recipes.create_item()
+
+    item
+  end
+
+  def create_flour() do
+    {:ok, %Ingredient{id: id}} = Recipes.create_ingredient(%{name: "flour", metric: "grams"})
+    id
+  end
+
+  def item_fixture(attrs \\ %{}) do
+    {:ok, item} =
+      attrs
+      |> Enum.into(%{dish: "some dish", optional: true, quantity: 42, ingredient_id: nil})
+      |> Recipes.create_item()
+
+    item
+  end
+
+  describe "dishes" do
+    test "list_dishes/0 lists all distinct dishes" do
+      flour = ingredient_fixture()
+      salt = ingredient_fixture(%{name: "salt", metric: "pinches"})
+      item_with_ingredient(flour.id)
+      item_with_ingredient(salt.id)
+      item_fixture(%{dish: "some other dish", ingredient_id: flour.id})
+
+      assert ["some other dish", "some dish"] = Recipes.list_dishes()
+    end
+  end
+
+  describe "ingredients" do
     @valid_attrs %{name: "flour", metric: "grams"}
     @invalid_attrs %{name: "flour", metric: 5}
-
-    def ingredient_fixture(attrs \\ %{}) do
-      {:ok, ingredient} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Recipes.create_ingredient()
-
-      ingredient
-    end
-
-    def item_with_ingredient(ingredient_id) do
-      {:ok, ingredient} =
-        %{dish: "some dish", optional: true, quantity: 42, ingredient_id: ingredient_id}
-        |> Recipes.create_item()
-
-      ingredient
-    end
 
     test "list_ingredients/0 returns all ingredients" do
       ingredient = ingredient_fixture()
@@ -67,20 +92,6 @@ defmodule ShoppingList.RecipesTest do
 
     @valid_attrs %{dish: "some dish", optional: true, quantity: 42, ingredient_id: nil}
     @invalid_attrs %{dish: nil, optional: nil, quantity: nil, ingredient: nil}
-
-    def create_flour() do
-      {:ok, %Ingredient{id: id}} = Recipes.create_ingredient(%{name: "flour", metric: "grams"})
-      id
-    end
-
-    def item_fixture(attrs \\ %{}) do
-      {:ok, item} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Recipes.create_item()
-
-      item
-    end
 
     test "list_items/0 returns all items with ingredients" do
       ingredient = ingredient_fixture()

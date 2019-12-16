@@ -42,7 +42,6 @@ defmodule ShoppingListWeb.IngredientControllerTest do
       assert html_response(conn, 200) =~ "Listing Ingredients"
     end
 
-    @tag :wip
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.ingredient_path(conn, :create), ingredient: @invalid_attrs)
       assert html_response(conn, 200) =~ "Cannot create ingredient, already created"
