@@ -7,7 +7,7 @@
   <% end %>
 
   <%= label f, :dish %>
-  <%= text_input f, :dish %>
+  <%= text_input f, :dish, [{"class", "awesomplete"}, {"data-list", @dishes}, {"data-autofirst", true}] %>
   <%= error_tag f, :dish %>
 
   <%= label f, :quantity %>
@@ -15,7 +15,7 @@
   <%= error_tag f, :quantity %>
 
   <%= select f, :ingredient_id, list(@ingredients) %>
-  
+
   <%= label f, :optional %>
   <%= checkbox f, :optional %>
   <%= error_tag f, :optional %>
