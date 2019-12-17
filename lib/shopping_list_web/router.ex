@@ -21,6 +21,7 @@ defmodule ShoppingListWeb.Router do
     resources "/items", ItemController
     get "/list", ListController, :new
     post "/list", ListController, :create
+    get "/dishes/:name", DishController, :show
   end
 
   # Other scopes may use custom stacks.

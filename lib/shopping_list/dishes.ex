@@ -1,19 +1,18 @@
-defmodule ShoppingList.Tallies do
+defmodule ShoppingList.Dishes do
   import Ecto.Query, warn: false
 
   alias ShoppingList.Repo
-  alias ShoppingList.Recipes.Ingredient
   alias ShoppingList.Recipes.Item
+  alias ShoppingList.Recipes.Ingredient
 
-  def create_list(dishes) do
+  def get_dish(name) do
     query = from item in Item,
       join: ingredient in Ingredient,
       on: item.ingredient_id == ingredient.id,
-      where: item.dish in ^dishes,
-      group_by: [item.optional, ingredient.name, ingredient.metric],
+      where: item.dish == ^name,
       order_by: [item.optional, ingredient.name],
       select: %{
-        quantity: sum(item.quantity),
+        quantity: item.quantity,
         ingredient: %{
           name: ingredient.name,
           metric: ingredient.metric,
@@ -22,7 +21,8 @@ defmodule ShoppingList.Tallies do
       }
 
     %{
-      items: Repo.all(query)
+      name: name,
+      items: query |> Repo.all,
     }
   end
 end
