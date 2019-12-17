@@ -1,21 +1,12 @@
 defmodule ShoppingListWeb.ItemControllerTest do
   use ShoppingListWeb.ConnCase
 
-  alias ShoppingList.Recipes
+  import ShoppingList.Factory
+
   alias ShoppingList.Recipes.Ingredient
 
   @create_attrs %{dish: "some dish", optional: true, quantity: 42, ingredient_id: nil}
   @invalid_attrs %{dish: nil, optional: nil, quantity: nil, ingredient_id: nil}
-
-  def fixture(:item) do
-    {:ok, item} = Recipes.create_item(%{ @create_attrs | ingredient_id: create_flour() })
-    item
-  end
-
-  def create_flour() do
-    {:ok, %Ingredient{id: id}} = Recipes.create_ingredient(%{name: "flour", metric: "grams"})
-    id
-  end
 
   describe "index" do
     test "lists all items", %{conn: conn} do
@@ -26,13 +17,13 @@ defmodule ShoppingListWeb.ItemControllerTest do
 
   describe "new item" do
     test "assigns ingredients", %{conn: conn} do
-      create_flour()
+      insert!(:ingredient)
       conn = get(conn, Routes.item_path(conn, :new))
       assert [ %Ingredient{} ] =  conn.assigns.ingredients
     end
 
     test "renders form", %{conn: conn} do
-      create_flour()
+      insert!(:ingredient)
       conn = get(conn, Routes.item_path(conn, :new))
       assert html_response(conn, 200) =~ "New Item"
     end
@@ -40,7 +31,8 @@ defmodule ShoppingListWeb.ItemControllerTest do
 
   describe "create item" do
     test "redirects to index when data is valid", %{conn: conn} do
-      conn = post(conn, Routes.item_path(conn, :create), item: %{ @create_attrs | ingredient_id: create_flour() })
+      ingredient = insert!(:ingredient)
+      conn = post(conn, Routes.item_path(conn, :create), item: %{ @create_attrs | ingredient_id: ingredient.id })
       assert redirected_to(conn) == Routes.item_path(conn, :index)
 
       conn = get(conn, Routes.item_path(conn, :index))
@@ -57,6 +49,7 @@ defmodule ShoppingListWeb.ItemControllerTest do
     setup [:create_item]
 
     test "deletes chosen item", %{conn: conn, item: item} do
+      inspect item
       conn = get(conn, Routes.item_path(conn, :index))
       assert html_response(conn, 200) =~ @create_attrs.dish
 
@@ -69,7 +62,7 @@ defmodule ShoppingListWeb.ItemControllerTest do
   end
 
   defp create_item(_) do
-    item = fixture(:item)
+    item = insert!(:item_with_ingredient)
     {:ok, item: item}
   end
 end

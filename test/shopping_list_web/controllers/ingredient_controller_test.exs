@@ -1,22 +1,10 @@
 defmodule ShoppingListWeb.IngredientControllerTest do
   use ShoppingListWeb.ConnCase
 
-  alias ShoppingList.Recipes
+  import ShoppingList.Factory
 
   @create_attrs %{name: "flour", metric: "grams"}
   @invalid_attrs %{name: "flour", metric: 5}
-
-  def fixture(:ingredient) do
-    {:ok, ingredient} = Recipes.create_ingredient(@create_attrs)
-    ingredient
-  end
-
-  def fixture(:ingredient_with_item) do
-    ingredient = fixture(:ingredient)
-    %{dish: "some dish", quantity: 42, ingredient_id: ingredient.id}
-    |> Recipes.create_item()
-    ingredient
-  end
 
   describe "index" do
     test "lists all ingredients", %{conn: conn} do
@@ -77,12 +65,13 @@ defmodule ShoppingListWeb.IngredientControllerTest do
   end
 
   defp create_ingredient(_) do
-    ingredient = fixture(:ingredient)
+    ingredient = insert!(:ingredient)
     {:ok, ingredient: ingredient}
   end
 
   defp create_ingredient_with_item(_) do
-    ingredient = fixture(:ingredient_with_item)
+    ingredient = insert!(:ingredient)
+    insert!(:item, ingredient_id: ingredient.id)
 
     {:ok, ingredient: ingredient}
   end
