@@ -22,4 +22,11 @@ defmodule ShoppingList.Factory do
   def insert!(factory_name, attrs \\ []) do
     Repo.insert!(build(factory_name, attrs))
   end
+
+  def create_dish(attrs \\ %{}) do
+    flour = insert!(:ingredient)
+    salt = insert!(:ingredient, %{name: "salt", metric: "pinches"})
+    insert!(:item, Map.merge(%{ingredient_id: flour.id}, attrs))
+    insert!(:item, Map.merge(%{ingredient_id: salt.id}, attrs))
+  end
 end

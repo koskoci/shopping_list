@@ -61,7 +61,7 @@ defmodule ShoppingListWeb.ItemControllerTest do
     end
   end
 
-  defp create_item(_) do
+  defp create_item(_conn) do
     item = insert!(:item_with_ingredient)
     {:ok, item: item}
   end
