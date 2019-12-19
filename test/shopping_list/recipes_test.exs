@@ -6,18 +6,6 @@ defmodule ShoppingList.RecipesTest do
   alias ShoppingList.Recipes
   alias ShoppingList.Recipes.Ingredient
 
-  describe "dishes" do
-    test "list_dishes/0 lists all distinct dishes" do
-      flour = insert!(:ingredient)
-      salt = insert!(:ingredient, %{name: "salt", metric: "pinches"})
-      insert!(:item, ingredient_id: flour.id)
-      insert!(:item, ingredient_id: salt.id)
-      insert!(:item, %{dish: "some other dish", ingredient_id: flour.id})
-
-      assert ["some other dish", "some dish"] = Recipes.list_dishes()
-    end
-  end
-
   describe "ingredients" do
     @valid_attrs %{name: "flour", metric: "grams"}
     @invalid_attrs %{name: "flour", metric: 5}

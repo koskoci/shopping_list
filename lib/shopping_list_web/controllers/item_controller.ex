@@ -1,7 +1,7 @@
 defmodule ShoppingListWeb.ItemController do
   use ShoppingListWeb, :controller
 
-  alias ShoppingList.Recipes
+  alias ShoppingList.{Recipes, Dishes}
   alias ShoppingList.Recipes.Item
 
   def index(conn, _params) do
@@ -38,7 +38,7 @@ defmodule ShoppingListWeb.ItemController do
 
   defp render_new(conn, changeset) do
     ingredients = Recipes.list_ingredients()
-    dishes = Recipes.list_dishes() |> Enum.join(", ")
+    dishes = Dishes.list_dishes() |> Enum.join(", ")
 
     render(conn, "new.html", changeset: changeset, ingredients: ingredients, dishes: dishes)
   end

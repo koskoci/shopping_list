@@ -7,7 +7,7 @@ defmodule ShoppingList.Factory do
   end
 
   def build(:item) do
-    %Item{ dish: "some dish", optional: true, quantity: 42, ingredient_id: nil }
+    %Item{ dish: "some dish", quantity: 42, ingredient_id: nil }
   end
 
   def build(:item_with_ingredient) do

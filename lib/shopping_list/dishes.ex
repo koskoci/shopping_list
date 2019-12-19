@@ -25,4 +25,9 @@ defmodule ShoppingList.Dishes do
       items: query |> Repo.all,
     }
   end
+
+  def list_dishes do
+    from(i in Item, distinct: true, select: i.dish)
+    |> Repo.all
+  end
 end

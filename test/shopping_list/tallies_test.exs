@@ -15,18 +15,20 @@ defmodule ShoppingList.TalliesTest do
     expected = %{
       items: [
         %{
-          quantity: 84,
           ingredient: %{
             name: "flour",
             metric: "grams",
           },
+          optional: false,
+          quantity: 84,
         },
         %{
-          quantity: 5,
           ingredient: %{
             name: "salt",
             metric: "pinches",
           },
+          optional: false,
+          quantity: 5,
         },
       ]
     }

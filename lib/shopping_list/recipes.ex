@@ -6,11 +6,6 @@ defmodule ShoppingList.Recipes do
   alias ShoppingList.Recipes.Ingredient
   alias ShoppingList.Recipes.Item
 
-  def list_dishes do
-    from(i in Item, distinct: true, select: i.dish)
-    |> Repo.all
-  end
-
   def list_ingredients do
     Repo.all(Ingredient)
   end
