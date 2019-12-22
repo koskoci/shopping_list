@@ -1,0 +1,15 @@
+<%= inputs_for @f, :items, fn i -> %>
+  <div id="new-item">
+    <div class="form-group">
+      <%= label i, :quantity %>
+      <%= number_input i, :quantity %>
+      <%= error_tag i, :quantity %>
+
+      <%= select i, :ingredient_id, list(@ingredients) %>
+
+      <%= label i, :optional %>
+      <%= checkbox i, :optional %>
+      <%= error_tag i, :optional %>
+    </div>
+  </div>
+<% end %>

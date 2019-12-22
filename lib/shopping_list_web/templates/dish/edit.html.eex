@@ -1,0 +1,5 @@
+<h1>Edit Dish</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.dish_path(@conn, :update, @dish)) %>
+
+<span><%= link "Back", to: Routes.dish_path(@conn, :index) %></span>

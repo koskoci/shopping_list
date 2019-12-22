@@ -3,8 +3,8 @@
 <%= form_for @conn, Routes.list_path(@conn, :create), fn f -> %>
   <%= for dish <- @dishes do %>
     <label>
-      <%= dish %>:
-      <input name="list[dishes][]" type="checkbox" value="<%= dish %>">
+      <%= dish.name %>:
+      <input name="list[dishes][]" type="checkbox" value="<%= dish.id %>">
     </label>
   <% end %>
 

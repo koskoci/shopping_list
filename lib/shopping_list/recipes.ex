@@ -7,7 +7,7 @@ defmodule ShoppingList.Recipes do
   alias ShoppingList.Recipes.Item
 
   def list_ingredients do
-    Repo.all(Ingredient)
+    Repo.all from i in Ingredient, order_by: i.name
   end
 
   def get_ingredient!(id), do: Repo.get!(Ingredient, id)

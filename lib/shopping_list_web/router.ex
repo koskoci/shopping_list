@@ -19,6 +19,7 @@ defmodule ShoppingListWeb.Router do
     resources "/ingredients", IngredientController
     get "/list", ListController, :new
     post "/list", ListController, :create
+    resources "/dishes", DishController
   end
 
   # Other scopes may use custom stacks.

@@ -1,5 +1,4 @@
 <h1><%= @dish.name %></h1>
-
 <table class="table">
   <thead>
     <tr>
@@ -20,3 +19,6 @@
     <% end %>
   </tbody>
 </table>
+
+<span><%= link "Edit", to: Routes.dish_path(@conn, :edit, @dish) %></span>
+<span><%= link "Back", to: Routes.dish_path(@conn, :index) %></span>

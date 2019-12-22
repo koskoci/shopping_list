@@ -1,0 +1,26 @@
+<h1>My Dishes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for dish <- @dishes do %>
+    <tr>
+      <td><%= dish.name %></td>
+
+      <td>
+        <span><%= link "Show", to: Routes.dish_path(@conn, :show, dish) %></span>
+        <span><%= link "Edit", to: Routes.dish_path(@conn, :edit, dish) %></span>
+        <span><%= link "Delete", to: Routes.dish_path(@conn, :delete, dish), method: :delete, data: [confirm: "Are you sure?"] %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Dish", to: Routes.dish_path(@conn, :new) %></span>

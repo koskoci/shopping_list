@@ -15,6 +15,6 @@ To start your Phoenix server:
 
 To run tests and watch for file changes:
 
-* `mix test.watch --listen-on-stdin`
+* `mix test.watch`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.

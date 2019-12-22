@@ -4,47 +4,98 @@ defmodule ShoppingList.DishesTest do
   import ShoppingList.Factory
 
   alias ShoppingList.Dishes
+  alias ShoppingList.Recipes.{Item, Ingredient}
 
   describe "dishes" do
-    test "list_dishes/0 lists all distinct dishes" do
-      flour = insert!(:ingredient)
-      salt = insert!(:ingredient, %{name: "salt", metric: "pinches"})
-      insert!(:item, ingredient_id: flour.id)
-      insert!(:item, ingredient_id: salt.id)
-      insert!(:item, %{dish: "some other dish", ingredient_id: flour.id})
+    alias ShoppingList.Dishes.Dish
 
-      assert ["some other dish", "some dish"] = Dishes.list_dishes()
+    @valid_attrs %{name: "some name", items: [%{
+      quantity: 42, ingredient: %{ name: "flour", metric: "grams" }
+      }]
+    }
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    test "list_dishes/0 returns all dishes without items" do
+      dish = insert!(:dish) |> items_not_loaded()
+      assert Dishes.list_dishes() == [dish]
     end
 
-    test "get_dish/1 returns a dish" do
-      flour = insert!(:ingredient)
-      salt = insert!(:ingredient, %{name: "salt", metric: "pinches"})
-      insert!(:item, %{dish: "some dish", ingredient_id: salt.id})
-      insert!(:item, %{dish: "some dish", ingredient_id: flour.id})
+    test "get_dish!/1 returns the dish with items and ingredients" do
+      persisted = insert!(:dish)
+      recalled = Dishes.get_dish!(persisted.id)
+      item = recalled.items |> List.first
 
-      result = Dishes.get_dish("some dish")
+      assert recalled == persisted
+      assert %Item{} = item
+      assert %Ingredient{} = item.ingredient
+    end
+
+    test "create_dish/1 with valid data creates a dish" do
+      assert {:ok, %Dish{} = dish} = Dishes.create_dish(@valid_attrs)
+      assert dish.name == "some name"
+    end
+
+    test "create_dish/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Dishes.create_dish(@invalid_attrs)
+    end
+
+    test "update_dish/2 with valid data updates the dish" do
+      dish = insert!(:dish)
+      assert {:ok, %Dish{} = dish} = Dishes.update_dish(dish, @update_attrs)
+      assert dish.name == "some updated name"
+    end
+
+    test "update_dish/2 with invalid data returns error changeset" do
+      dish = insert!(:dish)
+      assert {:error, %Ecto.Changeset{}} = Dishes.update_dish(dish, @invalid_attrs)
+      assert dish == Dishes.get_dish!(dish.id)
+    end
+
+    test "delete_dish/1 deletes the dish" do
+      dish = insert!(:dish)
+      assert {:ok, %Dish{}} = Dishes.delete_dish(dish)
+      assert_raise Ecto.NoResultsError, fn -> Dishes.get_dish!(dish.id) end
+    end
+
+    test "change_dish/1 returns a dish changeset" do
+      dish = insert!(:dish)
+      assert %Ecto.Changeset{} = Dishes.change_dish(dish)
+    end
+
+    test "create_list_from/1 returns a shopping list" do
+      dish_ids = insert_hotdog_and_perkelt()
+      result = Dishes.create_list_from(dish_ids)
       expected = %{
-        name: "some dish",
         items: [
-          %{
-            ingredient: %{
-              name: "flour",
-              metric: "grams",
-            },
-            optional: false,
-            quantity: 42,
-          },
           %{
             ingredient: %{
               name: "salt",
               metric: "pinches",
             },
             optional: false,
-            quantity: 42,
+            quantity: 11,
           },
-        ],
+          %{
+            ingredient: %{
+              name: "sausage",
+              metric: "pieces",
+            },
+            optional: false,
+            quantity: 2,
+          },
+        ]
       }
       assert ^expected = result
+    end
+
+    defp items_not_loaded(dish = %Dish{}) do
+      dish
+      |> struct(items: %Ecto.Association.NotLoaded{
+        __field__: :items,
+        __cardinality__: :many,
+        __owner__: ShoppingList.Dishes.Dish
+      })
     end
   end
 end
