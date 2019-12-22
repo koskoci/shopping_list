@@ -16,12 +16,9 @@ defmodule ShoppingListWeb.Router do
   scope "/", ShoppingListWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
     resources "/ingredients", IngredientController
-    resources "/items", ItemController
     get "/list", ListController, :new
     post "/list", ListController, :create
-    get "/dishes/:name", DishController, :show
   end
 
   # Other scopes may use custom stacks.

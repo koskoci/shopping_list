@@ -32,27 +32,4 @@ defmodule ShoppingList.Recipes do
   def change_ingredient(%Ingredient{} = ingredient) do
     Ingredient.changeset(ingredient, %{})
   end
-
-  def list_items do
-    query = from i in Item, preload: [:ingredient]
-    Repo.all(query)
-  end
-
-  def get_item!(id) do
-    Repo.one!(from i in Item, where: ^id == i.id)
-  end
-
-  def create_item(attrs \\ %{}) do
-    %Item{}
-    |> Item.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  def delete_item(%Item{} = item) do
-    Repo.delete(item)
-  end
-
-  def change_item(%Item{} = item) do
-    Item.changeset(item, %{})
-  end
 end
