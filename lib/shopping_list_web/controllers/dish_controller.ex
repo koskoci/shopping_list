@@ -37,7 +37,6 @@ defmodule ShoppingListWeb.DishController do
   def edit(conn, %{"id" => id}) do
     dish = Dishes.get_dish!(id)
     changeset = Dishes.change_dish(dish)
-    ingredients = Recipes.list_ingredients()
 
     render_edit(conn, changeset, dish)
   end

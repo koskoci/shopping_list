@@ -10,7 +10,7 @@ defmodule ShoppingList.DishesTest do
     alias ShoppingList.Dishes.Dish
 
     @valid_attrs %{name: "some name", items: [%{
-      quantity: 42, ingredient: %{ name: "flour", metric: "grams" }
+      quantity: 42, ingredient_id: nil
       }]
     }
     @update_attrs %{name: "some updated name"}
@@ -32,18 +32,36 @@ defmodule ShoppingList.DishesTest do
     end
 
     test "create_dish/1 with valid data creates a dish" do
-      assert {:ok, %Dish{} = dish} = Dishes.create_dish(@valid_attrs)
+      %{ id: ingredient_id } = insert!(:ingredient)
+      attrs = %{ @valid_attrs | items: [ %{ quantity: 42, ingredient_id: ingredient_id } ] }
+
+      assert {:ok, %Dish{} = dish} = Dishes.create_dish(attrs)
       assert dish.name == "some name"
+      assert %Item{} = dish.items |> List.first
     end
 
     test "create_dish/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Dishes.create_dish(@invalid_attrs)
     end
 
-    test "update_dish/2 with valid data updates the dish" do
+    test "update_dish/2 with updated name updates the dish" do
       dish = insert!(:dish)
       assert {:ok, %Dish{} = dish} = Dishes.update_dish(dish, @update_attrs)
       assert dish.name == "some updated name"
+    end
+
+    test "update_dish/2 with changes in items updates the dish" do
+      dish = insert!(:dish)
+      old_item = dish.items |> List.first |> Map.from_struct
+      %{ id: ingredient_id } = insert!(:ingredient, %{ metric: "grams", name: "sugar" })
+      new_items = %{ "1" => %{ quantity: 5, ingredient_id: ingredient_id }, "2" => old_item }
+      attrs = %{ items: new_items }
+
+      assert {:ok, %Dish{} = dish} = Dishes.update_dish(dish, attrs)
+      assert dish.items |> Enum.count == 2
+      [ last | [first] ] = dish.items
+      assert last.quantity == 5
+      assert first.quantity == 42
     end
 
     test "update_dish/2 with invalid data returns error changeset" do

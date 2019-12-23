@@ -12,7 +12,7 @@ defmodule ShoppingList.Recipes.Item do
   end
 
     @allowed_fields [:optional, :quantity, :ingredient_id, :dish_id]
-    @required_fields [:optional, :quantity]
+    @required_fields [:optional, :quantity, :ingredient_id]
 
   def changeset(item, attrs) do
     item
