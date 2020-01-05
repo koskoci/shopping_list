@@ -17,6 +17,7 @@ defmodule ShoppingListWeb.Router do
     pipe_through :browser
 
     resources "/ingredients", IngredientController
+    get "/", ListController, :new
     get "/list", ListController, :new
     post "/list", ListController, :create
     resources "/dishes", DishController

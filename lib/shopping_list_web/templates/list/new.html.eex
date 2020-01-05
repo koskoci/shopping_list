@@ -12,3 +12,5 @@
     <%= submit "Create List" %>
   </div>
 <% end %>
+
+<div id="elm-landing-pad"></div>
